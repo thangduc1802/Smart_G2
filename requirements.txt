@@ -1,0 +1,7 @@
+Flask
+Flask-CORS
+Flask-SQLAlchemy
+python-dotenv
+requests
+werkzeug
+gunicorn
