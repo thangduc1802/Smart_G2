@@ -43,23 +43,34 @@ def get_recommendations():
         plant_details = fetch_plant_id_details(access_token)
         if not plant_details:
             continue  # Skip if no details found
-
+   
         # Fetch additional details from Perenual
         perenual_details = fetch_perenual_plant_details(plant_id)
         if not perenual_details:
             continue  # Skip if no details found
 
+        #Extract image and license from perenual
+        default_image = perenual_details.get("default_image", {})
+        image_url = default_image.get("regular_url", "")
+        license_name = default_image.get("license_name", "")
+        license_url = default_image.get("license_url", "")
+
+        attribution = f"Image of {perenual_details.get('common_name', '')} from Perenual, licensed under {default_image.get('license_name', '')}."
+
         # Combine data
         recommended_plants.append({
 
+           "picture": {
+                "url": image_url,
+                "license_name": license_name,
+                "license_url": license_url
+            },
+            "attribution":attribution,
             "common_name": perenual_details.get("common_name", ""),
             "scientific_name": scientific_name,
-            "picture": plant_details.get("image", ""),
-            
-            
             "best_soil_type": plant_details.get("best_soil_type", ""),
             "best_watering": plant_details.get("best_watering", ""),
-            "watering": perenual_details.get("watering", "")
+            "watering": perenual_details.get("watering", "")  
         })
 
     return jsonify({"recommended_plants": recommended_plants})
